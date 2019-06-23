@@ -5,19 +5,18 @@ using SysPedidos.Model.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace SysPedidos.Data.Repository
 {
-    public class ClienteRepository : IClienteRepository
+    public class CardapioRepository : ICardapioRepository
     {
         private readonly IConfiguration _configuration;
 
-        public ClienteRepository(IConfiguration configuration)
+        public CardapioRepository(IConfiguration configuration)
         {
             _configuration = configuration;
         }
-    
+
         public String GetConnection()
         {
             string connection = _configuration.GetSection("ConnectionStrings").GetSection("DefaultConnection").Value;
@@ -25,7 +24,7 @@ namespace SysPedidos.Data.Repository
             return connection;
         }
 
-        public int AdicionarCliente(Cliente cliente)
+        public int AddItemCardapio(Cardapio cardapio)
         {
             string connection = GetConnection();
 
@@ -37,10 +36,9 @@ namespace SysPedidos.Data.Repository
                 {
                     con.Open();
 
-                    string query = "INSERT INTO Clientes(Nome_Cliente, Telefone, Endereco, DataCriacao) " +
-                                    "values(@NomeCliente, @Telefone, @Endereco, @DataCriacao)";
+                    string query = "INSERT INTO Cardapios values(@Item_cardapio, @Desc_Item";
 
-                    count = con.Execute(query, cliente);
+                    count = con.Execute(query, cardapio);
                 }
                 catch (Exception ex)
                 {
@@ -56,40 +54,16 @@ namespace SysPedidos.Data.Repository
             }
         }
 
-        public Cliente DetalhesCliente(long id)
+        public Cliente CardapioDetails(long id)
         {
-            string connection = GetConnection();
-
-            Cliente cliente = new Cliente();
-
-            using (var conn = new SqlConnection(connection))
-            {
-                try
-                {
-                    conn.Open();
-
-                    var query = "SELECT * FROM Clientes where ClienteId = " + id;
-
-                    cliente = conn.Query<Cliente>(query).FirstOrDefault();
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-                finally
-                {
-                    conn.Close();
-                }
-
-                return cliente;
-            }
+            throw new NotImplementedException();
         }
 
-        public List<Cliente> ListarClientes()
+        public List<Cardapio> CardapioList()
         {
             string connection = GetConnection();
 
-            List<Cliente> ListaCliente = new List<Cliente>();
+            List<Cardapio> ListaCardapio = new List<Cardapio>();
 
             using (var con = new SqlConnection(connection))
             {
@@ -97,9 +71,9 @@ namespace SysPedidos.Data.Repository
                 {
                     con.Open();
 
-                    var query = "SELECT NOME_CLIENTE NomeCliente, TELEFONE Telefone FROM Clientes";
+                    var query = "SELECT * FROM Cardapios";
 
-                    ListaCliente = con.Query<Cliente>(query).ToList();
+                    ListaCardapio = con.Query<Cardapio>(query).AsList();
                 }
                 catch (Exception ex)
                 {
@@ -111,11 +85,11 @@ namespace SysPedidos.Data.Repository
                     con.Close();
                 }
 
-                return ListaCliente;
+                return ListaCardapio;
             }
         }
 
-        public int DeletarCliente(long id)
+        public int DeleteCardapio(long id)
         {
             string connection = GetConnection();
 
@@ -127,7 +101,7 @@ namespace SysPedidos.Data.Repository
                 {
                     con.Open();
 
-                    string query = "DELETE FROM Clientes where Cliente_Id = " + id;
+                    string query = "DELETE FROM Cardapios where Cardapio_Id = " + id;
 
                     count = con.Execute(query);
                 }
@@ -143,8 +117,7 @@ namespace SysPedidos.Data.Repository
                 return count;
             }
         }
-
-        public int EditarCliente(Cliente cliente)
+        public int EditCardapio(Cardapio cardapio)
         {
             var connection = GetConnection();
 
@@ -156,8 +129,7 @@ namespace SysPedidos.Data.Repository
                 {
                     con.Open();
 
-                    var query = "UPDATE Clientes set NomeCliente = @NomeCliente, Telefone = @Telefone, " +
-                                "Endereco = @Endereco, DataCriacao = @DataCriacao";
+                    var query = "UPDATE Cardapios set Item_Cardapio = @Item_Cardapio, Desc_Item = @Desc_Item";
 
                     count = con.Execute(query);
 

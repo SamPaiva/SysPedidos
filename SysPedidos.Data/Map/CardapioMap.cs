@@ -14,7 +14,7 @@ namespace SysPedidos.Data.Map
             builder.HasKey(c => c.CardapioId);
             builder.Property(c => c.CardapioId).ValueGeneratedOnAdd();
             builder.Property(c => c.DescItem).IsRequired().HasMaxLength(200);
-            builder.Property(c => c.ItensCardapio).IsRequired();
+            builder.Property(c => c.ItemCardapio).IsRequired();
         }
     }
 }

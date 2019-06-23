@@ -13,5 +13,7 @@ namespace SysPedidos.Model
         public string Endereco { get; set; }
 
         public DateTime DataCriacao { get; set; }
+
+        public virtual Pedido Pedido { get; set; }
     }
 }

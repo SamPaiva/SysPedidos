@@ -8,7 +8,7 @@ namespace SysPedidos.Model
     {
         public long CardapioId { get; set; }
 
-        public List<string> ItensCardapio { get; set; }
+        public string ItemCardapio { get; set; }
 
         public string DescItem { get; set; }
     }

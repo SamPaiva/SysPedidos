@@ -32,9 +32,9 @@ namespace SysPedidos.Data.Context
             builder.ApplyConfiguration(new PedidoMap());
             builder.ApplyConfiguration(new CardapioMap());
 
-            builder.Entity<Cliente>().ToTable("Clientes");
+            builder.Entity<Cliente>().ToTable("Clientes").HasOne(c => c.Pedido).WithOne(c => c.Cliente);
             builder.Entity<Pedido>().ToTable("Pedidos");
-            builder.Entity<Cardapio>().ToTable("Clientes");
+            builder.Entity<Cardapio>().ToTable("Cardapios");
 
         }
 

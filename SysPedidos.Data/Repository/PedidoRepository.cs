@@ -6,18 +6,19 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 
 namespace SysPedidos.Data.Repository
 {
-    public class ClienteRepository : IClienteRepository
+    public class PedidoRepository : IPedidoRepository
     {
         private readonly IConfiguration _configuration;
 
-        public ClienteRepository(IConfiguration configuration)
+        public PedidoRepository(IConfiguration configuration)
         {
             _configuration = configuration;
         }
-    
+
         public String GetConnection()
         {
             string connection = _configuration.GetSection("ConnectionStrings").GetSection("DefaultConnection").Value;
@@ -25,7 +26,7 @@ namespace SysPedidos.Data.Repository
             return connection;
         }
 
-        public int AdicionarCliente(Cliente cliente)
+        public int AdicionarPedido(Pedido pedido)
         {
             string connection = GetConnection();
 
@@ -37,10 +38,10 @@ namespace SysPedidos.Data.Repository
                 {
                     con.Open();
 
-                    string query = "INSERT INTO Clientes(Nome_Cliente, Telefone, Endereco, DataCriacao) " +
-                                    "values(@NomeCliente, @Telefone, @Endereco, @DataCriacao)";
+                    string query = "INSERT INTO Pedidos(DataPedido, Cardapio, Cliente) " +
+                                    "values(@DataPedido, @Cardapio, @Cliente)";
 
-                    count = con.Execute(query, cliente);
+                    count = con.Execute(query, pedido);
                 }
                 catch (Exception ex)
                 {
@@ -56,66 +57,7 @@ namespace SysPedidos.Data.Repository
             }
         }
 
-        public Cliente DetalhesCliente(long id)
-        {
-            string connection = GetConnection();
-
-            Cliente cliente = new Cliente();
-
-            using (var conn = new SqlConnection(connection))
-            {
-                try
-                {
-                    conn.Open();
-
-                    var query = "SELECT * FROM Clientes where ClienteId = " + id;
-
-                    cliente = conn.Query<Cliente>(query).FirstOrDefault();
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-                finally
-                {
-                    conn.Close();
-                }
-
-                return cliente;
-            }
-        }
-
-        public List<Cliente> ListarClientes()
-        {
-            string connection = GetConnection();
-
-            List<Cliente> ListaCliente = new List<Cliente>();
-
-            using (var con = new SqlConnection(connection))
-            {
-                try
-                {
-                    con.Open();
-
-                    var query = "SELECT NOME_CLIENTE NomeCliente, TELEFONE Telefone FROM Clientes";
-
-                    ListaCliente = con.Query<Cliente>(query).ToList();
-                }
-                catch (Exception ex)
-                {
-
-                    throw ex;
-                }
-                finally
-                {
-                    con.Close();
-                }
-
-                return ListaCliente;
-            }
-        }
-
-        public int DeletarCliente(long id)
+        public int DeletarPedido(long id)
         {
             string connection = GetConnection();
 
@@ -127,7 +69,7 @@ namespace SysPedidos.Data.Repository
                 {
                     con.Open();
 
-                    string query = "DELETE FROM Clientes where Cliente_Id = " + id;
+                    string query = "DELETE FROM Pedidos where Pedido_Id = " + id;
 
                     count = con.Execute(query);
                 }
@@ -142,9 +84,39 @@ namespace SysPedidos.Data.Repository
 
                 return count;
             }
+
         }
 
-        public int EditarCliente(Cliente cliente)
+        public Pedido DetalhesPedido(long id)
+        {
+            string connection = GetConnection();
+
+            Pedido pedido = new Pedido();
+
+            using (var conn = new SqlConnection(connection))
+            {
+                try
+                {
+                    conn.Open();
+
+                    var query = "SELECT * FROM Pedidos where Pedido_Id = " + id;
+
+                    pedido = conn.Query<Pedido>(query).FirstOrDefault();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    conn.Close();
+                }
+
+                return pedido;
+            }
+        }
+
+        public int EditarPedido(Pedido pedido)
         {
             var connection = GetConnection();
 
@@ -156,8 +128,7 @@ namespace SysPedidos.Data.Repository
                 {
                     con.Open();
 
-                    var query = "UPDATE Clientes set NomeCliente = @NomeCliente, Telefone = @Telefone, " +
-                                "Endereco = @Endereco, DataCriacao = @DataCriacao";
+                    var query = "UPDATE Pedidos set Cardapio.Item_Cardapio = @Cardapio.Item_Cardapio";
 
                     count = con.Execute(query);
 
@@ -172,6 +143,39 @@ namespace SysPedidos.Data.Repository
                 {
                     con.Close();
                 }
+            }
+        }
+
+        public List<Pedido> ListarPedidos()
+        {
+            string connection = GetConnection();
+
+            List<Pedido> ListaPedido = new List<Pedido>();
+
+            using (var con = new SqlConnection(connection))
+            {
+                try
+                {
+                    con.Open();
+
+                    var query = @"SELECT PED.PEDIDO_ID PedidoId, PED.DATA_PEDIDO DataPedido, CLI.NOME_CLIENTE NomeCliente, PED.DESCRICAO_PEDIDO Descricao 
+                                    FROM PEDIDOS AS PED WITH(NOLOCK)
+		                                INNER JOIN CLIENTES AS CLI WITH(NOLOCK)
+		                                ON CLI.CLIENTE_ID = PED.CLIENTE_ID";
+
+                    ListaPedido = con.Query<Pedido>(query).ToList();
+                }
+                catch (Exception ex)
+                {
+
+                    throw ex;
+                }
+                finally
+                {
+                    con.Close();
+                }
+
+                return ListaPedido;
             }
         }
     }

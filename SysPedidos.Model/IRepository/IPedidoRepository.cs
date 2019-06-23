@@ -4,14 +4,14 @@ namespace SysPedidos.Model.IRepository
 {
     public interface IPedidoRepository
     {
-        List<Pedido> PedidoList();
+        List<Pedido> ListarPedidos();
 
-        int AddPedido(Pedido pedido);
+        int AdicionarPedido(Pedido pedido);
 
-        Pedido PedidoDetails(long id);
+        Pedido DetalhesPedido(long id);
 
-        int EditPedido(Pedido pedido);
+        int EditarPedido(Pedido pedido);
 
-        int DeletePedido(long id);
+        int DeletarPedido(long id);
     }
 }
